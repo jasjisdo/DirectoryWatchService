@@ -107,17 +107,18 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService, Runna
             }
 
             WatchEvent<Path> pathEvent = cast(event);
-            Path file = pathEvent.context();
+            Path filePath = pathEvent.context();
 
+            final Path dir = getDirPath(key);
             if (eventKind.equals(ENTRY_CREATE)) {
-                matchedListeners(getDirPath(key), file)
-                        .forEach(listener -> listener.onFileCreate(file.toString()));
+                matchedListeners(dir, filePath)
+                        .forEach(listener -> listener.onFileCreate(dir.resolve(filePath).toString()));
             } else if (eventKind.equals(ENTRY_MODIFY)) {
-                matchedListeners(getDirPath(key), file)
-                        .forEach(listener -> listener.onFileModify(file.toString()));
+                matchedListeners(dir, filePath)
+                        .forEach(listener -> listener.onFileModify(dir.resolve(filePath).toString()));
             } else if (eventKind.equals(ENTRY_DELETE)) {
-                matchedListeners(getDirPath(key), file)
-                        .forEach(listener -> listener.onFileDelete(file.toString()));
+                matchedListeners(dir, filePath)
+                        .forEach(listener -> listener.onFileDelete(dir.resolve(filePath).toString()));
             }
         }
     }

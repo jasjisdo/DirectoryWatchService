@@ -21,21 +21,21 @@ public class Main {
             watchService.register(
                     new DirectoryWatchService.OnFileChangeListener() {
                         @Override
-                        public void onFileCreate(String fileName) {
+                        public void onFileCreate(String fileLocation) {
                             // File created
-                            log.info("new file created: " + tempDir + fileName);
+                            log.info("new file created: " + fileLocation);
                         }
 
                         @Override
-                        public void onFileModify(String fileName) {
+                        public void onFileModify(String fileLocation) {
                             // File modified
-                            log.info("file modified: " + tempDir + fileName);
+                            log.info("file modified: " + fileLocation);
                         }
 
                         @Override
-                        public void onFileDelete(String fileName) {
+                        public void onFileDelete(String fileLocation) {
                             // File deleted
-                            log.info("file deleted: " + tempDir + fileName);
+                            log.info("file deleted: " + fileLocation);
                         }
                     }
 //                    <directory>, // Directory to watch
