@@ -14,7 +14,10 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // Get the default temp dir by java system property. 
         String tempDir = System.getProperty("java.io.tmpdir");
+        
+        // Register service to watch file updates in temp dir.
         DirectoryWatchService watchService = null;
         try {
             watchService = new SimpleDirectoryWatchService();
@@ -43,12 +46,15 @@ public class Main {
 //                    <file-glob-pattern-2>, // E.g. "input-?.txt"
 //                    <file-glob-pattern-3>, // E.g. "config.ini"
 //                    ... // As many patterns as you like
-                    , tempDir
-                    , "*.txt"
-                    , "*.csv"
+                    , tempDir 
+                    , "*.txt" // Text files
+                    , "*.csv" // CSV files
             );
 
+            // Launch service
             watchService.start();
+            
+            // Reduce cpu load of example
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         } catch (IOException e) {
             log.error("Unable to register file change listener for " + tempDir);
@@ -61,7 +67,7 @@ public class Main {
 
         }
 
-        // create a txt file
+        // Create a txt file
         File tempFile = new File(tempDir + File.separator + "data.txt");
         try {
             tempFile.createNewFile();
@@ -90,7 +96,7 @@ public class Main {
 
         }
 
-        // delete file
+        // Delete file
         tempFile.delete();
 
         // Wait 2 sec after file deletion...
@@ -100,7 +106,7 @@ public class Main {
 
         }
 
-        // stop watch service
+        // Stop service (lazy)
         watchService.stop();
     }
 }
