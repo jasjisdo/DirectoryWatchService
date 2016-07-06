@@ -53,9 +53,7 @@ public class Main {
 
             // Launch service
             watchService.start();
-            
-            // Reduce cpu load of example
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+
         } catch (IOException e) {
             log.error("Unable to register file change listener for " + tempDir);
         }
@@ -106,7 +104,7 @@ public class Main {
 
         }
 
-        // Stop service (lazy)
+        // Stop service (responsive)
         watchService.stop();
     }
 }

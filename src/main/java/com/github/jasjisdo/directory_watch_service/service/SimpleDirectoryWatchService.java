@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,7 +20,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
 /**
  * A simple class which can monitor files and notify interested parties
  * (i.e. listeners) of file changes.
- *
+ * <p>
  * This class is kept lean by only keeping methods that are actually being
  * called.
  */
@@ -47,7 +48,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService, Runna
 
     @SuppressWarnings("unchecked")
     private static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-        return (WatchEvent<T>)event;
+        return (WatchEvent<T>) event;
     }
 
     private static <K, V> ConcurrentMap<K, V> newConcurrentMap() {
@@ -194,18 +195,20 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService, Runna
      */
     @Override
     public void run() {
+
+        // Reduce cpu load of this thread
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+
         LOGGER.info("Starting file watcher service.");
 
         while (mIsRunning.get()) {
+
             WatchKey key;
-            try {
-                key = mWatchService.take();
-            } catch (InterruptedException e) {
-                LOGGER.info(
-                        DirectoryWatchService.class.getSimpleName()
-                        + " service interrupted."
-                );
-                break;
+            Optional<WatchKey> optKey = Optional.ofNullable(mWatchService.poll());
+            if (optKey.isPresent()) {
+                key = optKey.get();
+            } else {
+                continue;
             }
 
             if (null == getDirPath(key)) {
